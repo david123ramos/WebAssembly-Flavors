@@ -1,0 +1,1 @@
+"o diretório atual funciona como uma memória virtual"

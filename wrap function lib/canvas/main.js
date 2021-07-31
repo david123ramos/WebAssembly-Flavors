@@ -31,6 +31,7 @@ const api = {
 
 
 async function init() {
+    
     const img = await getImageData("./img.jpg");
     const  p = api.createBuffer(img.width, img.height);
     Module.HEAP8.set(img.data, p);
@@ -52,8 +53,6 @@ async function init() {
     api.freeResult();
 
     api.clearBuffer(p);
-
-
 }
 
 init();

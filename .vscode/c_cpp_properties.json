@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        },{
+            "name": "default",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/david/programs/emsdk/upstream/**"
+            ]
+        }
+    ],
+    "version": 4
+}

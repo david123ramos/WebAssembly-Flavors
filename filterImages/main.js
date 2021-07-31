@@ -30,9 +30,7 @@ const getRBGFromImage = async function(src) {
 const api = {
     createBuffer: Module.cwrap("createBuffer", "number", ["number", "number"]),
     clearBuffer: Module.cwrap("clearBuffer", "", ["number"]),
-
     sepia: Module.cwrap("sepia", "", ["number", "number", "number", "number", "number"]),
-    freeResult: Module.cwrap("free_result", "", ["number"]),
     getResultPointer: Module.cwrap("get_result_pointer", "number", []),
     getResultSize: Module.cwrap("get_result_size", "number", []),
 }
@@ -56,10 +54,5 @@ async function init() {
     const im = document.createElement("img");
     im.src = url;
     document.querySelector("#result").appendChild(im);
-
-
-    api.freeResult();
-
     api.clearBuffer(p);
-
 }

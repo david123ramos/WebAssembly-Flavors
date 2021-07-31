@@ -50,6 +50,6 @@ int get_result_size() {
 /*
 emcc -O3 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' \
     -I libwebp \
-    webp.c \
+    canvasEncoding.c \
     libwebp/src/{dec,dsp,demux,enc,mux,utils}/*.c
 */

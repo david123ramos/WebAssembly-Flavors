@@ -33,6 +33,7 @@ canvas {
 }
 
 canvas.trimmedCv {
+    padding: 1rem;
     width: 9rem;
     border: 1px solid black;
 }

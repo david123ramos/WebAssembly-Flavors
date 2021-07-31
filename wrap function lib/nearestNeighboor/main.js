@@ -15,6 +15,7 @@ async function init(img) {
 
     console.log(t2 - t1);
 
+
     var output_array = new Uint8ClampedArray(response);
     const smallData = smallCtx.getImageData(0, 0, smallcv.width, smallcv.height);
 
@@ -23,10 +24,34 @@ async function init(img) {
         smallData.data[i] = output_array[i];
     }
 
+     
+    //Codigo para o Trim 
     smallCtx.putImageData(smallData, 0, 0);
+    img = smallCtx.getImageData(0, 0, smallcv.width, smallcv.height);
+    len = img.data.length;
+    bytes_per_element = img.data.BYTES_PER_ELEMENT;
+
+    const p2 = Module._malloc(len * bytes_per_element);
+    Module.HEAP8.set(img.data, p2);
+
+
+    const response2 = Module.trimCanvas(p2, len, img.width, img.height);
+
+    console.log(response2);
+
+    var copy = document.createElement('canvas').getContext('2d'),
+    trimmed = smallCtx.getImageData(response2[0], response2[1], response2[2], response2[3]);
+
+    console.log(trimmed);
+    console.log(smallData);
+
+    copy.canvas.width = response2[2];
+    copy.canvas.height = response2[3];
+    copy.canvas.classList.add("trimmedCv");
+    copy.putImageData(trimmed, 0, 0);
+    document.body.append(copy.canvas);
 
     Module._free(p);
-
 }
 
 

@@ -1,3 +1,107 @@
+const wasmResults = [];
+const jsResults = [];
+function testeCarga() {
+
+    const size = 16777;
+    // const size = 1;
+    const canvas = document.createElement("canvas");
+    const img = document.createElement("img");
+
+    for(let i= 0; i < size; i++) {
+
+        const name = `e${("00000" + i).slice(-5)}.png`;
+
+        img.src = `trainingImages/${name}`;
+
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const context = canvas.getContext("2d");
+        context.drawImage(img, 0, 0 );
+
+
+        init(context.getImageData(0,0,canvas.width, canvas.height)).then(result => {
+            wasmResults.push(result);
+            if(i + 1 == size) {
+                console.log("end wasm");
+            }
+        });
+
+        init2(context.getImageData(0,0,canvas.width, canvas.height)).then(result2 => {
+            jsResults.push(result2);
+            if(i + 1 == size) {
+                console.log("end js");
+            }
+        });
+        
+    }
+    //getResults();
+}
+
+function mean(numbers) {
+    return numbers.reduce((acc, next) =>  acc+ next) / numbers.length ;
+}
+function variance(numbers, mean) {
+    return numbers.reduce((acc, next) => acc + Math.pow(mean - next, 2)/ numbers.length, 0);
+} 
+function standardDeviation(variance) {
+    return Math.sqrt(variance);
+}
+
+
+
+function getResults() {
+    let mwasm = mean(wasmResults);
+    let vwasm = variance(wasmResults, mwasm);
+    let sdwasm = standardDeviation(vwasm);
+    
+    console.log("========== end -  WASM Results =========");
+    console.log(`MEAN: ${mwasm}`);
+    console.log(`VARIANCE: ${vwasm}`);
+    console.log(`STANDARD DEVIATION: ${sdwasm}`);
+    console.log(`\n\n`);
+    
+    
+    let mjs = mean(jsResults);
+    let vjs = variance(jsResults, mjs);
+    let sdjs = standardDeviation(vjs);
+    
+    console.log("========== end - JS Results =========");
+    console.log(`MEAN: ${mjs}`);
+    console.log(`VARIANCE: ${vjs}`);
+    console.log(`STANDARD DEVIATION: ${sdjs}`);
+    console.log(`\n\n`);
+
+    const browser = "FIREFOX DEVELOPER EDITION";
+
+    const obj = {
+        "WASM" : {
+            "mean": mwasm,
+            "variance": vwasm,
+            "standar deviation": sdwasm,
+        },
+        "JS" : {
+            "mean": mjs,
+            "variance": vjs,
+            "standar deviation": sdjs,
+        },
+        "Browser": browser,
+        "DATETIME": new Date(),
+    }
+    downloadObjectAsJson(obj, `RESULTS PREPROCESSING - ${browser} - ${Date.now()}`);
+}
+
+function downloadObjectAsJson(exportObj, exportName){
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}    
+
+
 
 async function init(img) {
 
@@ -10,24 +114,20 @@ async function init(img) {
     Module.HEAP8.set(img.data, p);
 
     const t1 = performance.now();
-    const response = Module.resizeNearestNeighboor(p, len, img.width, img.height, 28, 28);
+    Module.resizeNearestNeighboor(p, len, img.width, img.height, 28, 28);    
     const t2 = performance.now();
-
-    console.log(t2 - t1);
-
-    var output_array = new Uint8ClampedArray(response);
-    const smallData = smallCtx.getImageData(0, 0, smallcv.width, smallcv.height);
-
-
-    for (let i = 0; i < smallData.data.length; i++) {
-        smallData.data[i] = output_array[i];
-    }
-
-    smallCtx.putImageData(smallData, 0, 0);
-
     Module._free(p);
-
+    return t2- t1;
 }
+
+async function init2(img) {
+
+    const t1 = performance.now();
+    nearestNeighborResize(img, newSize, newSize);  
+    const t2 = performance.now();
+    return t2- t1;
+}
+
 
 
 const largecv = document.querySelector("#largecv");
@@ -54,8 +154,6 @@ function processing() {
     const largeData = largeCtx.getImageData(0, 0, largecv.width, largecv.height);
 
     init(largeData, newSize, newSize);
-
-
 }
 
 

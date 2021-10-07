@@ -2,12 +2,12 @@
     "WASM": {
         "mean": 0.04184299963566674,
         "variance": 0.5051979627411245,
-        "standar deviation": 0.7107727926286462
+        "standard deviation": 0.7107727926286462
     },
     "JS": {
         "mean": 0.22788341220033292,
         "variance": 93.3164401390606,
-        "standar deviation": 9.660043485360747
+        "standard deviation": 9.660043485360747
     },
     "Browser": "BRAVE",
     "DATETIME": "2021-08-04T01:04:14.939Z"
